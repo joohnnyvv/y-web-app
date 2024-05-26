@@ -1,0 +1,11 @@
+.like-icon {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.like-icon:hover {
+  transform: scale(1.2);
+}

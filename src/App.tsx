@@ -1,26 +1,34 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import NavBar from "./Components/NavBar/NavBar";
+import {createTheme, Paper, ThemeProvider} from "@mui/material";
+import PostsList from "./Components/Posts/PostsList";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    const darkTheme = createTheme({
+        palette: {
+            mode: 'dark',
+        },
+    });
+    return (
+        <ThemeProvider theme={darkTheme}>
+            <Paper
+                style={{
+                    minHeight: "100vh",
+                    width: "100%",
+                    overflowX: "hidden",
+                    paddingBottom: 24,
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    borderRadius: 0
+                }}
+                elevation={0}
+            >
+                <NavBar/>
+                <PostsList />
+            </Paper>
+        </ThemeProvider>
+    );
 }
 
 export default App;
