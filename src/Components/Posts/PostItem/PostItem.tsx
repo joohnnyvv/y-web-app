@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Post } from "../../../Models/PostsModels";
+import { useEffect, useState } from "react";
+import { Post } from "../../../Models/PostModel";
 import {
   Avatar,
   Box,
@@ -12,6 +12,7 @@ import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlin
 import FavoriteOutlinedIcon from "@mui/icons-material/FavoriteOutlined";
 import CommentIcon from "@mui/icons-material/Comment";
 import "./PostItem.css";
+import { ActiveBadge } from "../../ActiveBadge/ActiveBadge";
 
 interface PostItemProps {
   post: Post;
@@ -65,7 +66,31 @@ export default function PostItem(props: PostItemProps) {
           }}
         >
           <IconButton sx={{ p: 0, marginBottom: "20px" }}>
-            <Avatar alt={props.post.author} />
+            {props.post.isAuthorActive ? (
+              <ActiveBadge
+                overlap="circular"
+                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                variant="dot"
+              >
+                <Avatar
+                  alt={
+                    props.post.author.name + " " + props.post.author.lastName
+                  }
+                  sx={{ bgcolor: props.post.author.avatarColor }}
+                >
+                  {props.post.author.name.charAt(0) +
+                    props.post.author.lastName.charAt(0)}
+                </Avatar>
+              </ActiveBadge>
+            ) : (
+              <Avatar
+                alt={props.post.author.name + " " + props.post.author.lastName}
+                sx={{ bgcolor: props.post.author.avatarColor }}
+              >
+                {props.post.author.name.charAt(0) +
+                  props.post.author.lastName.charAt(0)}
+              </Avatar>
+            )}
           </IconButton>
           <Box sx={{ display: "flex", flexDirection: "column", gap: "8px" }}>
             <Box
@@ -94,7 +119,7 @@ export default function PostItem(props: PostItemProps) {
             variant="h6"
             sx={{ fontWeight: "bold", fontSize: "1.1rem" }}
           >
-            {props.post.author}
+            {props.post.author.name + " " + props.post.author.lastName}
           </Typography>
           <Typography variant="caption" sx={{ color: "grey" }}>
             {getFormattedDate(props.post.date)}

@@ -11,10 +11,11 @@ import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 // @ts-ignore
-import AppLogo from "../../Assets/AppLogo/app-logo.jpg";
+import AppLogo from "../../Assets/AppLogo/app-logo.png";
 import { loggedProfileMenuSettings } from "../../Consts/ProfileMenu";
-import { Autocomplete, TextField } from "@mui/material";
-import { searchedUsers } from "../../Mocks/searchedUsers";
+import ThemeSwitch from "./ThemeSwitch/ThemeSwitch";
+import { ActiveBadge } from "../ActiveBadge/ActiveBadge";
+import { Link } from "react-router-dom";
 
 function ResponsiveAppBar() {
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
@@ -30,23 +31,29 @@ function ResponsiveAppBar() {
   };
 
   return (
-    <AppBar position="sticky" sx={{ padding: "10px" }}>
+    <AppBar position="fixed" sx={{ padding: "2px" }}>
       <Container maxWidth="xl">
         <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
           <Box sx={{ display: "flex", width: "50%", gap: "50px" }}>
-            <Button size="small">
+            <Link to="/">
               <img
                 src={AppLogo}
                 alt="y-logo"
-                style={{ height: "3rem", borderRadius: "10px" }}
+                style={{ height: "3rem", borderRadius: "16px" }}
               />
-            </Button>
-            <TextField label="Search" />
+            </Link>
           </Box>
           <Box sx={{ flexGrow: 0 }}>
+            <ThemeSwitch />
             <Tooltip title="Open profile settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" />
+                <ActiveBadge
+                  overlap="circular"
+                  anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                  variant="dot"
+                >
+                  <Avatar alt="Remy Sharp" />
+                </ActiveBadge>
               </IconButton>
             </Tooltip>
             <Menu
