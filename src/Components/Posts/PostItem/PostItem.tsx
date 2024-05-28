@@ -1,20 +1,48 @@
 import { useEffect, useRef, useState } from "react";
 import { Post } from "../../../Models/PostModel";
-import { Box, Collapse, Paper, Typography } from "@mui/material";
+import {
+  Box,
+  Collapse,
+  Icon,
+  IconButton,
+  Modal,
+  Paper,
+  Typography,
+} from "@mui/material";
 import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
 import FavoriteOutlinedIcon from "@mui/icons-material/FavoriteOutlined";
 import CommentIcon from "@mui/icons-material/Comment";
 import "./PostItem.css";
 import UserAvatar from "../../UserAvatar/UserAvatar";
+import CloseIcon from "@mui/icons-material/Close";
 
 interface PostItemProps {
   post: Post;
 }
 
+const modalImgStyle = {
+  position: "absolute" as "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: "fit-content",
+  height: "90%",
+  bgcolor: "background.paper",
+  display: "flex",
+  alignItems: "center",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 4,
+};
+
 export default function PostItem(props: PostItemProps) {
   const [isPostTextExpanded, setIsPostTextExpanded] = useState(false);
   const [isLikedByUser, setIsLikedByUser] = useState(props.post.isLikedByMe);
   const [isTextOverflowing, setIsTextOverflowing] = useState(false);
+  const [isModalImgOpen, setIsModalImgOpen] = useState(false);
+
+  const handleOpen = () => setIsModalImgOpen(true);
+  const handleClose = () => setIsModalImgOpen(false);
 
   const textRef = useRef<HTMLDivElement>(null);
 
@@ -131,8 +159,47 @@ export default function PostItem(props: PostItemProps) {
               </Typography>
             </Box>
           )}
+          {props.post.imageUrl ? (
+            <Box sx={{ width: "100%" }} maxWidth={"560px"}>
+              <img
+                src={props.post.imageUrl}
+                style={{
+                  maxWidth: "100%",
+                  borderRadius: "4px",
+                  cursor: "pointer",
+                }}
+                alt={props.post.content}
+                onClick={handleOpen}
+              />
+            </Box>
+          ) : (
+            ""
+          )}
         </Box>
       </Box>
+      <Modal
+        open={isModalImgOpen}
+        onClose={handleClose}
+        aria-labelledby="img-modal"
+        aria-describedby="img-modal"
+      >
+        <Box sx={modalImgStyle}>
+          <IconButton
+            onClick={handleClose}
+            sx={{ position: "absolute", top: "15px", left: "15px" }}
+          >
+            <CloseIcon />
+          </IconButton>
+          <img
+            src={props.post.imageUrl}
+            style={{
+              maxHeight: "80vh",
+              maxWidth: "80vw",
+            }}
+            alt={props.post.content}
+          />
+        </Box>
+      </Modal>
     </Paper>
   );
 }

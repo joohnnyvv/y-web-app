@@ -18,16 +18,16 @@ export default function HomePage() {
           justifyContent: "space-evenly",
         }}
       >
-        {isXLUp && (
+        {/* {isXLUp && (
           <TrendingPapers
             header={"Who to follow:"}
             typeOfContent={"users"}
             collapsedSize={95}
             side="left"
           />
-        )}
+        )} */}
         <PostsList child={<AddPostInput />} />
-        {isXLUp && (
+        {/* {isXLUp && (
           <TrendingPapers
             header={"Trending posts:"}
             typeOfContent={"posts"}
@@ -35,7 +35,7 @@ export default function HomePage() {
             side="right"
             disableCollapse
           />
-        )}
+        )} */}
       </Box>
     </>
   );

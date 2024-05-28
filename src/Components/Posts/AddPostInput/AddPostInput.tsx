@@ -1,8 +1,31 @@
-import { Avatar, Box, Button, Paper, TextField } from "@mui/material";
-import React from "react";
+import {
+  Avatar,
+  Box,
+  Button,
+  IconButton,
+  Paper,
+  TextField,
+  Typography,
+} from "@mui/material";
+import React, { useEffect, useState } from "react";
 import { ActiveBadge } from "../../ActiveBadge/ActiveBadge";
+import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
+import AddImageDialog from "../AddImageDialog/AddImageDialog";
+import DownloadDoneIcon from "@mui/icons-material/DownloadDone";
 
 export default function AddPostInput() {
+  const [imgUrl, setImgUrl] = useState("");
+  const [isAddImgDialogOpen, setIsAddImgDialogOpen] = useState(false);
+  const [isImgUrlPresent, setIsImgUrlPresent] = useState(false);
+
+  const handleAddImageUrl = (url: string) => {
+    setImgUrl(url);
+  };
+
+  useEffect(() => {
+    imgUrl ? setIsImgUrlPresent(true) : setIsImgUrlPresent(false);
+  }, [imgUrl]);
+
   return (
     <Paper
       elevation={5}
@@ -39,12 +62,31 @@ export default function AddPostInput() {
           multiline
           maxRows={6}
         />
-        <Button
-          variant="contained"
-          sx={{ maxWidth: "30%", alignSelf: "end", borderRadius: "14px" }}
-        >
-          Post
-        </Button>
+        <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+          <IconButton onClick={() => setIsAddImgDialogOpen(true)}>
+            {isImgUrlPresent ? (
+              <>
+                <DownloadDoneIcon />
+                <Typography variant="caption" sx={{ marginLeft: "3px" }}>
+                  Image added
+                </Typography>
+              </>
+            ) : (
+              <AddPhotoAlternateIcon />
+            )}
+          </IconButton>
+          <AddImageDialog
+            open={isAddImgDialogOpen}
+            handleAddImageUrl={handleAddImageUrl}
+            onClose={() => setIsAddImgDialogOpen(false)}
+          />
+          <Button
+            variant="contained"
+            sx={{ maxWidth: "30%", alignSelf: "end", borderRadius: "14px" }}
+          >
+            Post
+          </Button>
+        </Box>
       </Box>
     </Paper>
   );

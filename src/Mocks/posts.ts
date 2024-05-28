@@ -10,6 +10,7 @@ export const mockedPosts: Post[] = [
         commentsCount: 12,
         isLikedByMe: false,
         date: new Date("2024-05-26T10:30:00"),
+        imageUrl: 'https://images.unsplash.com/photo-1586078074298-05dca4848695?q=80&w=3270&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
     },
     {
         id: 2,
@@ -91,6 +92,7 @@ export const mockedPosts: Post[] = [
         commentsCount: 18,
         isLikedByMe: true,
         date: new Date("2024-05-25T15:15:00"),
+        imageUrl: "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?q=80&w=2730&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
     },
     {
         id: 11,
@@ -109,6 +111,7 @@ export const mockedPosts: Post[] = [
         commentsCount: 7,
         isLikedByMe: true,
         date: new Date("2024-05-25T12:45:00"),
+        imageUrl: "https://images.unsplash.com/photo-1494232410401-ad00d5433cfa?q=80&w=3270&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
     },
     {
         id: 13,
