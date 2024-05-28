@@ -8,7 +8,7 @@ export default function AddPostInput() {
       elevation={5}
       sx={{
         padding: "20px 20px 10px 20px",
-        borderRadius: "24px",
+        borderRadius: "0",
         marginBottom: "20px",
         display: "flex",
         gap: "20px",

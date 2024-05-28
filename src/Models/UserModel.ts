@@ -1,10 +1,14 @@
 export interface User {
     id: number,
-    name: string,
+    name: string,           
     lastName: string,
+    password?: string,
+    email?: string,       
     followersCount?: number,
     isFollowingCount?: number,
-    avatarColor: UserAvatarColors
+    avatarColor: UserAvatarColors,
+    isActive: boolean,
+    isFollowedByUser: boolean
 }
 
 export enum UserAvatarColors {

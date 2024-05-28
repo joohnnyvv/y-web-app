@@ -7,10 +7,10 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useState } from "react";
-import { popularUsers } from "../../Mocks/popularUsers";
+import { popularUsers } from "../../../Mocks/popularUsers";
 import PopularUserItem from "./PopularUserItem/PopularUserItem";
-import { mockedPosts } from "../../Mocks/posts";
-import PostItem from "../Posts/PostItem/PostItem";
+import { mockedPosts } from "../../../Mocks/posts";
+import PostItem from "../../Posts/PostItem/PostItem";
 
 interface TrendingPapersProps {
   header: string;
@@ -37,7 +37,7 @@ export default function TrendingPapers(props: TrendingPapersProps) {
     >
       <Paper
         variant="outlined"
-        sx={{ width: "100%", padding: "16px", borderRadius: "24px" }}
+        sx={{ width: "100%", padding: "16px", borderRadius: "0" }}
       >
         <Box>
           <Typography variant="h4">{props.header}</Typography>

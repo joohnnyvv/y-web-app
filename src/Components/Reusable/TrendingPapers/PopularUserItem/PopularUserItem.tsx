@@ -1,5 +1,5 @@
 import { Avatar, Box, Typography } from "@mui/material";
-import { ActiveBadge } from "../../ActiveBadge/ActiveBadge";
+import { ActiveBadge } from "../../../ActiveBadge/ActiveBadge";
 
 interface PopularUserItemProps {
   user: string;

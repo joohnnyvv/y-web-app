@@ -1,18 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Post } from "../../../Models/PostModel";
-import {
-  Avatar,
-  Box,
-  Collapse,
-  IconButton,
-  Paper,
-  Typography,
-} from "@mui/material";
+import { Box, Collapse, Paper, Typography } from "@mui/material";
 import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
 import FavoriteOutlinedIcon from "@mui/icons-material/FavoriteOutlined";
 import CommentIcon from "@mui/icons-material/Comment";
 import "./PostItem.css";
-import { ActiveBadge } from "../../ActiveBadge/ActiveBadge";
+import UserAvatar from "../../UserAvatar/UserAvatar";
 
 interface PostItemProps {
   post: Post;
@@ -21,6 +14,17 @@ interface PostItemProps {
 export default function PostItem(props: PostItemProps) {
   const [isPostTextExpanded, setIsPostTextExpanded] = useState(false);
   const [isLikedByUser, setIsLikedByUser] = useState(props.post.isLikedByMe);
+  const [isTextOverflowing, setIsTextOverflowing] = useState(false);
+
+  const textRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (textRef.current) {
+      setIsTextOverflowing(
+        textRef.current.scrollHeight > textRef.current.clientHeight
+      );
+    }
+  }, [textRef, props.post.content]);
 
   const getFormattedDate = (date: string | Date) => {
     const now = new Date();
@@ -54,7 +58,7 @@ export default function PostItem(props: PostItemProps) {
   };
 
   return (
-    <Paper elevation={3} sx={{ padding: "20px", borderRadius: "24px" }}>
+    <Paper elevation={3} sx={{ padding: "20px", borderRadius: "0" }}>
       <Box sx={{ display: "flex", gap: "20px" }}>
         <Box
           sx={{
@@ -65,33 +69,14 @@ export default function PostItem(props: PostItemProps) {
             justifyContent: "space-evenly",
           }}
         >
-          <IconButton sx={{ p: 0, marginBottom: "20px" }}>
-            {props.post.isAuthorActive ? (
-              <ActiveBadge
-                overlap="circular"
-                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-                variant="dot"
-              >
-                <Avatar
-                  alt={
-                    props.post.author.name + " " + props.post.author.lastName
-                  }
-                  sx={{ bgcolor: props.post.author.avatarColor }}
-                >
-                  {props.post.author.name.charAt(0) +
-                    props.post.author.lastName.charAt(0)}
-                </Avatar>
-              </ActiveBadge>
-            ) : (
-              <Avatar
-                alt={props.post.author.name + " " + props.post.author.lastName}
-                sx={{ bgcolor: props.post.author.avatarColor }}
-              >
-                {props.post.author.name.charAt(0) +
-                  props.post.author.lastName.charAt(0)}
-              </Avatar>
-            )}
-          </IconButton>
+          <UserAvatar
+            userId={props.post.user.id}
+            isActive={props.post.user.isActive}
+            name={props.post.user.name}
+            lastName={props.post.user.lastName}
+            avatarColor={props.post.user.avatarColor}
+            marginBottom="20px"
+          />
           <Box sx={{ display: "flex", flexDirection: "column", gap: "8px" }}>
             <Box
               className="like-icon"
@@ -119,31 +104,33 @@ export default function PostItem(props: PostItemProps) {
             variant="h6"
             sx={{ fontWeight: "bold", fontSize: "1.1rem" }}
           >
-            {props.post.author.name + " " + props.post.author.lastName}
+            {props.post.user.name + " " + props.post.user.lastName}
           </Typography>
           <Typography variant="caption" sx={{ color: "grey" }}>
             {getFormattedDate(props.post.date)}
           </Typography>
-          <Collapse collapsedSize={70} in={isPostTextExpanded}>
+          <Collapse ref={textRef} collapsedSize={70} in={isPostTextExpanded}>
             <Typography paragraph>{props.post.content}</Typography>
           </Collapse>
-          <Box
-            sx={{
-              display: "flex",
-              width: "100%",
-              justifyContent: "end",
-            }}
-          >
-            <Typography
-              variant="caption"
-              onClick={() => {
-                setIsPostTextExpanded(!isPostTextExpanded);
+          {isTextOverflowing && (
+            <Box
+              sx={{
+                display: "flex",
+                width: "100%",
+                justifyContent: "end",
               }}
-              sx={{ cursor: "pointer", color: "grey" }}
             >
-              {!isPostTextExpanded ? "Show more" : "Show less"}
-            </Typography>
-          </Box>
+              <Typography
+                variant="caption"
+                onClick={() => {
+                  setIsPostTextExpanded(!isPostTextExpanded);
+                }}
+                sx={{ cursor: "pointer", color: "grey" }}
+              >
+                {!isPostTextExpanded ? "Show more" : "Show less"}
+              </Typography>
+            </Box>
+          )}
         </Box>
       </Box>
     </Paper>

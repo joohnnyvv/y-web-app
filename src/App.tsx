@@ -10,10 +10,11 @@ import {
 import PostsList from "./Components/Posts/PostsList";
 import { useAtom } from "jotai";
 import { themeAtom } from "./utils/Atoms";
-import TrendingPapers from "./Components/TrendingPapers/TrendingPapers";
+import TrendingPapers from "./Components/Reusable/TrendingPapers/TrendingPapers";
 import HomePage from "./Components/Pages/HomePage/HomePage";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import NotFoundPage from "./Components/Pages/NotFoundPage/NotFoundPage";
+import ProfilePage from "./Components/Pages/ProfilePage/ProfilePage";
 
 function App() {
   const [theme, setTheme] = useAtom(themeAtom);
@@ -34,6 +35,10 @@ function App() {
       element: <HomePage />,
       errorElement: <NotFoundPage />,
     },
+    {
+      path: "/profile/:userId",
+      element: <ProfilePage />,
+    },
   ]);
 
   useEffect(() => {
@@ -52,6 +57,7 @@ function App() {
           top: 0,
           left: 0,
           borderRadius: 0,
+          overflowX: "hidden",
         }}
         elevation={0}
       >
