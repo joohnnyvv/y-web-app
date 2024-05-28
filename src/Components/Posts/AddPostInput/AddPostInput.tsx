@@ -79,6 +79,7 @@ export default function AddPostInput() {
             open={isAddImgDialogOpen}
             handleAddImageUrl={handleAddImageUrl}
             onClose={() => setIsAddImgDialogOpen(false)}
+            addedImgUrl={imgUrl}
           />
           <Button
             variant="contained"
