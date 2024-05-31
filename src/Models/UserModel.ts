@@ -8,7 +8,7 @@ export interface User {
     isFollowingCount?: number,
     avatarColor: UserAvatarColors,
     isActive: boolean,
-    isFollowedByUser: boolean
+    isFollowedByUser?: boolean
 }
 
 export enum UserAvatarColors {

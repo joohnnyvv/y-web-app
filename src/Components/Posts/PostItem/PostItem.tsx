@@ -15,6 +15,7 @@ import CommentIcon from "@mui/icons-material/Comment";
 import "./PostItem.css";
 import UserAvatar from "../../UserAvatar/UserAvatar";
 import CloseIcon from "@mui/icons-material/Close";
+import CommentsModal from "../../Comments/CommentsModal";
 
 interface PostItemProps {
   post: Post;
@@ -40,6 +41,7 @@ export default function PostItem(props: PostItemProps) {
   const [isLikedByUser, setIsLikedByUser] = useState(props.post.isLikedByMe);
   const [isTextOverflowing, setIsTextOverflowing] = useState(false);
   const [isModalImgOpen, setIsModalImgOpen] = useState(false);
+  const [isCommentsModalOpen, setIsCommentsModalOpen] = useState(false);
 
   const handleOpen = () => setIsModalImgOpen(true);
   const handleClose = () => setIsModalImgOpen(false);
@@ -119,7 +121,10 @@ export default function PostItem(props: PostItemProps) {
                 {props.post.likesCount}
               </Typography>
             </Box>
-            <Box className="like-icon">
+            <Box
+              className="like-icon"
+              onClick={() => setIsCommentsModalOpen(true)}
+            >
               <CommentIcon fontSize="small" />
               <Typography align="center" variant="caption">
                 {props.post.commentsCount}
@@ -151,7 +156,9 @@ export default function PostItem(props: PostItemProps) {
               <Typography
                 variant="caption"
                 onClick={() => {
-                  setIsPostTextExpanded(!isPostTextExpanded);
+                  setIsPostTextExpanded((prev) => {
+                    return !prev;
+                  });
                 }}
                 sx={{ cursor: "pointer", color: "grey" }}
               >
@@ -177,6 +184,11 @@ export default function PostItem(props: PostItemProps) {
           )}
         </Box>
       </Box>
+      <CommentsModal
+        post={props.post}
+        isOpen={isCommentsModalOpen}
+        handleClose={() => setIsCommentsModalOpen(false)}
+      />
       <Modal
         open={isModalImgOpen}
         onClose={handleClose}
