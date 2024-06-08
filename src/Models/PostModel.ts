@@ -2,7 +2,7 @@ import { User } from "./UserModel"
 
  export interface Post {
     id: number,
-     user: User,
+     author: User,
      content: string,
      likesCount: number,
      commentsCount: number,

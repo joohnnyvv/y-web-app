@@ -7,20 +7,32 @@ import Typography from "@mui/material/Typography";
 import Menu from "@mui/material/Menu";
 import Container from "@mui/material/Container";
 import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 // @ts-ignore
 import AppLogo from "../../Assets/AppLogo/app-logo.png";
-import { loggedProfileMenuSettings } from "../../Consts/ProfileMenu";
 import ThemeSwitch from "./ThemeSwitch/ThemeSwitch";
 import { ActiveBadge } from "../ActiveBadge/ActiveBadge";
 import { Link } from "react-router-dom";
+import { useAtom } from "jotai";
+import { isLoggedInAtom, loggedUserAtom } from "../../utils/Atoms";
+import {
+  loggedMenuSettings,
+  notLoggedMenuSettings,
+} from "../../Consts/ProfileMenu";
+import SettingsMenuModal from "../Reusable/SettingsMenuModal/SettingsMenuModal";
+import { useState } from "react";
 
 function ResponsiveAppBar() {
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
     null
   );
+  const [isLoggedIn, setIsLoggedIn] = useAtom(isLoggedInAtom);
+  const [settingsMenuCase, setSettingsMenuCase] = useState<
+    "Profile" | "Logout" | "Log in" | "Sign in"
+  >("Log in");
+  const [isSettingsMenuModalOpen, setIsSettingsMenuModalOpen] = useState(false);
+  const [loggedUser, setLoggedUser] = useAtom(loggedUserAtom);
 
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
@@ -28,6 +40,33 @@ function ResponsiveAppBar() {
 
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
+  };
+
+  const handleSettingsMenuModalClose = () => {
+    setIsSettingsMenuModalOpen(false);
+  };
+
+  const handleUserMenuItemClick = (
+    menuItem: "Profile" | "Logout" | "Log in" | "Sign in"
+  ) => {
+    switch (menuItem) {
+      case "Log in":
+        setSettingsMenuCase(menuItem);
+        setIsSettingsMenuModalOpen(true);
+        break;
+      case "Sign in":
+        setSettingsMenuCase(menuItem);
+        setIsSettingsMenuModalOpen(true);
+        break;
+      case "Profile":
+        setSettingsMenuCase(menuItem);
+        setIsSettingsMenuModalOpen(true);
+        break;
+      case "Logout":
+        setIsLoggedIn(false);
+        setLoggedUser(null);
+        break;
+    }
   };
 
   return (
@@ -47,13 +86,16 @@ function ResponsiveAppBar() {
             <ThemeSwitch />
             <Tooltip title="Open profile settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <ActiveBadge
-                  overlap="circular"
-                  anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-                  variant="dot"
-                >
+                {loggedUser ? (
+                  <Avatar
+                    alt={loggedUser.name + " " + loggedUser.lastName}
+                    sx={{ bgcolor: loggedUser.avatarColor }}
+                  >
+                    {loggedUser.name.charAt(0) + loggedUser.lastName.charAt(0)}
+                  </Avatar>
+                ) : (
                   <Avatar alt="Remy Sharp" />
-                </ActiveBadge>
+                )}
               </IconButton>
             </Tooltip>
             <Menu
@@ -72,14 +114,31 @@ function ResponsiveAppBar() {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              {loggedProfileMenuSettings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
-                </MenuItem>
-              ))}
+              {isLoggedIn
+                ? Object.values(loggedMenuSettings).map((setting) => (
+                    <MenuItem
+                      key={setting}
+                      onClick={() => handleUserMenuItemClick(setting)}
+                    >
+                      <Typography textAlign="center">{setting}</Typography>
+                    </MenuItem>
+                  ))
+                : Object.values(notLoggedMenuSettings).map((setting) => (
+                    <MenuItem
+                      key={setting}
+                      onClick={() => handleUserMenuItemClick(setting)}
+                    >
+                      <Typography textAlign="center">{setting}</Typography>
+                    </MenuItem>
+                  ))}
             </Menu>
           </Box>
         </Toolbar>
+        <SettingsMenuModal
+          isOpen={isSettingsMenuModalOpen}
+          case={settingsMenuCase}
+          handleClose={handleSettingsMenuModalClose}
+        />
       </Container>
     </AppBar>
   );

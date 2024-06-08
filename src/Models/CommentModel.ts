@@ -3,8 +3,13 @@ import { User } from "./UserModel";
 export interface Comment {
   id: number;
   content: string;
-  user: User;
+  author: User;
   likesCount: number;
   isLikedByMe: boolean;
   date: string;
+}
+
+export interface CommentMessage {
+  postId: number,
+  commentResponse: Comment,
 }

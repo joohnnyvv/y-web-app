@@ -1,7 +1,6 @@
-import { Box, Button, Link, Paper, Typography } from "@mui/material";
+import { Box, Link, Paper, Typography } from "@mui/material";
 import UserAvatar from "../../UserAvatar/UserAvatar";
 import { User } from "../../../Models/UserModel";
-import FollowButton from "../../Reusable/FollowButton/FollowButton";
 
 export default function ProfileInfoPaper(props: { user: User }) {
   return (
@@ -23,7 +22,6 @@ export default function ProfileInfoPaper(props: { user: User }) {
         >
           <UserAvatar
             userId={0}
-            isActive={props.user.isActive}
             name={props.user.name}
             lastName={props.user.lastName}
             avatarColor={props.user.avatarColor}

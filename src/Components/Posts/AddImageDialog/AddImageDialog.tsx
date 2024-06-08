@@ -48,30 +48,28 @@ export default function AddImageDialog(props: AddImageDialogProps) {
   };
 
   return (
-    <Dialog onClose={handleClose} open={props.open}>
-      <Box
-        sx={{
-          padding: "15px 10px 5px 10px",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
-          gap: "5px",
-        }}
-      >
-        <TextField
-          fullWidth
-          id="img-url-field"
-          label="Image link"
-          variant="filled"
-          value={imageUrl}
-          onChange={handleInputChange}
-          placeholder={"Add image url here"}
-          error={!!error}
-          helperText={error}
-        />
-        <Button onClick={handleAddImage}>Add</Button>
-      </Box>
-    </Dialog>
+    <Box
+      sx={{
+        padding: "15px 10px 5px 10px",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        gap: "5px",
+      }}
+    >
+      <TextField
+        fullWidth
+        id="img-url-field"
+        label="Image link"
+        variant="outlined"
+        value={imageUrl}
+        onChange={handleInputChange}
+        placeholder={"Add image url here"}
+        error={!!error}
+        helperText={error}
+      />
+      <Button onClick={handleAddImage}>Add</Button>
+    </Box>
   );
 }

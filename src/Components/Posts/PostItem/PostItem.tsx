@@ -3,7 +3,6 @@ import { Post } from "../../../Models/PostModel";
 import {
   Box,
   Collapse,
-  Icon,
   IconButton,
   Modal,
   Paper,
@@ -16,6 +15,11 @@ import "./PostItem.css";
 import UserAvatar from "../../UserAvatar/UserAvatar";
 import CloseIcon from "@mui/icons-material/Close";
 import CommentsModal from "../../Comments/CommentsModal";
+import axios from "axios";
+import { ApiPaths, apiUrl } from "../../../Consts/Api";
+import { useAtom } from "jotai";
+import { isLoggedInAtom, loggedUserAtom } from "../../../utils/Atoms";
+import { useSnackbar } from "../../../Context/SnackbarContext";
 
 interface PostItemProps {
   post: Post;
@@ -42,11 +46,41 @@ export default function PostItem(props: PostItemProps) {
   const [isTextOverflowing, setIsTextOverflowing] = useState(false);
   const [isModalImgOpen, setIsModalImgOpen] = useState(false);
   const [isCommentsModalOpen, setIsCommentsModalOpen] = useState(false);
+  const [likesCount, setLikesCount] = useState(props.post.likesCount);
+  const [loggedUser] = useAtom(loggedUserAtom);
+  const [isLogged] = useAtom(isLoggedInAtom);
+  const { openSnackbar } = useSnackbar();
 
   const handleOpen = () => setIsModalImgOpen(true);
   const handleClose = () => setIsModalImgOpen(false);
 
   const textRef = useRef<HTMLDivElement>(null);
+
+  const handleLikeClick = async () => {
+    try {
+      await axios.post(`${apiUrl}${ApiPaths.POSTS.LIKE}`, {
+        userId: loggedUser?.id,
+        postId: props.post.id,
+      });
+      setIsLikedByUser((prev) => {
+        return !prev;
+      });
+    } catch (error) {
+      setIsLikedByUser((prev) => {
+        return !prev;
+      });
+      if (axios.isAxiosError(error)) {
+        openSnackbar(error.message, "error");
+      } else if (error instanceof Error) {
+        openSnackbar(error.message, "error");
+      } else {
+        openSnackbar("Couldn't add post due to an unknown error", "error");
+      }
+    }
+    setLikesCount((prev) => {
+      return isLikedByUser ? prev - 1 : prev + 1;
+    });
+  };
 
   useEffect(() => {
     if (textRef.current) {
@@ -100,27 +134,25 @@ export default function PostItem(props: PostItemProps) {
           }}
         >
           <UserAvatar
-            userId={props.post.user.id}
-            isActive={props.post.user.isActive}
-            name={props.post.user.name}
-            lastName={props.post.user.lastName}
-            avatarColor={props.post.user.avatarColor}
+            userId={props.post.author.id}
+            name={props.post.author.name}
+            lastName={props.post.author.lastName}
+            avatarColor={props.post.author.avatarColor}
             marginBottom="20px"
           />
           <Box sx={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-            <Box
-              className="like-icon"
-              onClick={() => setIsLikedByUser(!isLikedByUser)}
-            >
-              {isLikedByUser ? (
-                <FavoriteOutlinedIcon fontSize="small" color="error" />
-              ) : (
-                <FavoriteBorderOutlinedIcon fontSize="small" />
-              )}
-              <Typography align="center" variant="caption">
-                {props.post.likesCount}
-              </Typography>
-            </Box>
+            <IconButton onClick={handleLikeClick} disabled={!isLogged}>
+              <Box className="like-icon">
+                {isLikedByUser ? (
+                  <FavoriteOutlinedIcon fontSize="small" color="error" />
+                ) : (
+                  <FavoriteBorderOutlinedIcon fontSize="small" />
+                )}
+                <Typography align="center" variant="caption">
+                  {likesCount}
+                </Typography>
+              </Box>
+            </IconButton>
             <Box
               className="like-icon"
               onClick={() => setIsCommentsModalOpen(true)}
@@ -137,7 +169,7 @@ export default function PostItem(props: PostItemProps) {
             variant="h6"
             sx={{ fontWeight: "bold", fontSize: "1.1rem" }}
           >
-            {props.post.user.name + " " + props.post.user.lastName}
+            {props.post.author.name + " " + props.post.author.lastName}
           </Typography>
           <Typography variant="caption" sx={{ color: "grey" }}>
             {getFormattedDate(props.post.date)}

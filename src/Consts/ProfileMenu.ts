@@ -1,7 +1,8 @@
-export const loggedProfileMenuSettings: string[] = [
-    'Profile', 'Logout'
-]
-
-export const notLoggedProfileMenuSettings: string[] = [
-    'Log in', 'Sign in'
-]
+export enum loggedMenuSettings {
+    PROFILE = 'Profile',
+    LOGOUT = "Logout"
+}
+export enum notLoggedMenuSettings {
+    LOG_IN = 'Log in',
+    SIGN_IN = "Sign in"
+}

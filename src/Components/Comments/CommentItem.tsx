@@ -44,11 +44,10 @@ export default function CommentItem(props: CommentItemProps) {
           }}
         >
           <UserAvatar
-            userId={props.comment.user.id}
-            isActive={props.comment.user.isActive}
-            name={props.comment.user.name}
-            lastName={props.comment.user.lastName}
-            avatarColor={props.comment.user.avatarColor}
+            userId={props.comment.author.id}
+            name={props.comment.author.name}
+            lastName={props.comment.author.lastName}
+            avatarColor={props.comment.author.avatarColor}
           />
           <Box
             className="like-icon"
@@ -66,7 +65,7 @@ export default function CommentItem(props: CommentItemProps) {
         </Box>
         <Box sx={{ display: "flex", flexDirection: "column", gap: "10px" }}>
           <Typography>
-            {props.comment.user.name} {props.comment.user.lastName}
+            {props.comment.author.name} {props.comment.author.lastName}
           </Typography>
           <Collapse ref={textRef} collapsedSize={70} in={isCommentExpanded}>
             <Typography paragraph sx={{ fontWeight: 300 }}>
