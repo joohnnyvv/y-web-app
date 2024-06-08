@@ -1,10 +1,15 @@
-import { Box, Collapse, Paper, Typography } from "@mui/material";
+import { Box, Collapse, IconButton, Paper, Typography } from "@mui/material";
 import { Comment } from "../../Models/CommentModel";
 import UserAvatar from "../UserAvatar/UserAvatar";
 import { useEffect, useRef, useState } from "react";
 import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
 import FavoriteOutlinedIcon from "@mui/icons-material/FavoriteOutlined";
 import "./CommentItem.css";
+import { useAtom } from "jotai";
+import { isLoggedInAtom, loggedUserAtom } from "../../utils/Atoms";
+import axios from "axios";
+import { ApiPaths, apiUrl } from "../../Consts/Api";
+import { useSnackbar } from "../../Context/SnackbarContext";
 
 interface CommentItemProps {
   comment: Comment;
@@ -13,7 +18,11 @@ interface CommentItemProps {
 export default function CommentItem(props: CommentItemProps) {
   const [isCommentExpanded, setIsCommentExpanded] = useState(false);
   const [isTextOverflowing, setIsTextOverflowing] = useState(false);
-  const [isLikedByUser, setIsLikedByUser] = useState(false);
+  const [isLikedByUser, setIsLikedByUser] = useState(props.comment.isLikedByMe);
+  const [likesCount, setLikesCount] = useState(props.comment.likesCount);
+  const [isLogged] = useAtom(isLoggedInAtom);
+  const [loggedUser] = useAtom(loggedUserAtom);
+  const { openSnackbar } = useSnackbar();
 
   const textRef = useRef<HTMLDivElement>(null);
 
@@ -24,6 +33,30 @@ export default function CommentItem(props: CommentItemProps) {
       );
     }
   }, [textRef, props.comment.content]);
+
+  const handleLikeClick = async () => {
+    try {
+      await axios.post(`${apiUrl}${ApiPaths.COMMENTS.LIKE}`, {
+        userId: loggedUser?.id,
+        postId: props.comment.id,
+      });
+      setIsLikedByUser((prev) => {
+        return !prev;
+      });
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        openSnackbar(error.message, "error");
+      } else if (error instanceof Error) {
+        openSnackbar(error.message, "error");
+      } else {
+        openSnackbar("Couldn't like comment due to an unknown error", "error");
+      }
+    } finally {
+      setLikesCount((prev) => {
+        return isLikedByUser ? prev - 1 : prev + 1;
+      });
+    }
+  };
 
   return (
     <Paper elevation={0} sx={{ padding: "15px" }}>
@@ -53,13 +86,15 @@ export default function CommentItem(props: CommentItemProps) {
             className="like-icon"
             onClick={() => setIsLikedByUser(!isLikedByUser)}
           >
-            {isLikedByUser ? (
-              <FavoriteOutlinedIcon fontSize="small" color="error" />
-            ) : (
-              <FavoriteBorderOutlinedIcon fontSize="small" />
-            )}
+            <IconButton onClick={handleLikeClick} disabled={!isLogged}>
+              {isLikedByUser ? (
+                <FavoriteOutlinedIcon fontSize="small" color="error" />
+              ) : (
+                <FavoriteBorderOutlinedIcon fontSize="small" />
+              )}
+            </IconButton>
             <Typography align="center" variant="caption">
-              {props.comment.likesCount}
+              {likesCount}
             </Typography>
           </Box>
         </Box>

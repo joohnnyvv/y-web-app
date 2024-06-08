@@ -1,15 +1,17 @@
+import { Paper, Skeleton, Typography } from "@mui/material";
 import Box from "@mui/material/Box";
-import CircularProgress from "@mui/material/CircularProgress";
-import PostItem from "./PostItem/PostItem";
-import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
-import { Post } from "../../Models/PostModel";
+import { useEffect, useRef, useState } from "react";
 import { ApiPaths, apiUrl } from "../../Consts/Api";
-import { Avatar, Paper, Skeleton, Typography } from "@mui/material";
-import AddPostInput from "./AddPostInput/AddPostInput";
-import ProfileInfoPaper from "../Pages/ProfilePage/ProfileInfoPaper";
-import { User } from "../../Models/UserModel";
 import { useSnackbar } from "../../Context/SnackbarContext";
+import { Post } from "../../Models/PostModel";
+import { User } from "../../Models/UserModel";
+import ProfileInfoPaper from "../Pages/ProfilePage/ProfileInfoPaper";
+import AddPostInput from "./AddPostInput/AddPostInput";
+import PostItem from "./PostItem/PostItem";
+import { useAtom } from "jotai";
+import { isLoggedInAtom, loggedUserAtom } from "../../utils/Atoms";
+import { parse } from "path";
 
 interface PostsListProps {
   child: "profile" | "main";
@@ -19,6 +21,10 @@ interface PostsListProps {
 export default function PostsList(props: PostsListProps) {
   const [posts, setPosts] = useState<Post[] | undefined>();
   const [isLoading, setIsLoading] = useState(false);
+  const [loggedUser, setLoggedUser] = useAtom(loggedUserAtom);
+  const [isLogged, setIsLogged] = useAtom(isLoggedInAtom);
+  const didMount = useRef(false);
+  const loggedUserId = useRef(-1);
   const { openSnackbar } = useSnackbar();
 
   const fetchPosts = async () => {
@@ -26,7 +32,9 @@ export default function PostsList(props: PostsListProps) {
       setIsLoading(true);
       try {
         const response = await axios.get(
-          `${apiUrl}${ApiPaths.POSTS.POSTS}?filter=new`
+          `${apiUrl}${ApiPaths.POSTS.POSTS}?loggedUserId=${
+            loggedUser ? loggedUser.id : -1
+          }&filter=new`
         );
         setPosts(response.data);
       } catch (error) {
@@ -50,7 +58,23 @@ export default function PostsList(props: PostsListProps) {
   };
 
   useEffect(() => {
-    fetchPosts();
+    if (didMount.current) {
+      fetchPosts();
+    }
+  }, [loggedUser]);
+
+  useEffect(() => {
+    const savedUser = localStorage.getItem("loggedUser");
+    if (savedUser) {
+      const parsedUser: User = JSON.parse(savedUser);
+      setIsLogged(true);
+      setLoggedUser(parsedUser);
+      loggedUserId.current = parsedUser.id;
+      fetchPosts();
+    } else {
+      fetchPosts();
+    }
+    didMount.current = true;
   }, []);
 
   return (
@@ -85,7 +109,7 @@ export default function PostsList(props: PostsListProps) {
       ) : posts ? (
         <Box sx={{ display: "flex", flexDirection: "column", gap: "15px" }}>
           {posts.map((post) => (
-            <PostItem key={post.id} post={post} />
+            <PostItem key={post.id} post={post} fetchPosts={fetchPosts} />
           ))}
         </Box>
       ) : (

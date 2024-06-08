@@ -1,26 +1,23 @@
-import React, { useEffect, useRef } from "react";
 import {
-  Box,
   createTheme,
   Paper,
   ThemeProvider,
   useMediaQuery,
 } from "@mui/material";
 import { useAtom } from "jotai";
+import { useEffect } from "react";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import HomePage from "./Components/Pages/HomePage/HomePage";
+import NotFoundPage from "./Components/Pages/NotFoundPage/NotFoundPage";
+import ProfilePage from "./Components/Pages/ProfilePage/ProfilePage";
+import useStompClient from "./Consts/UseStompClient";
+import { SnackbarProvider } from "./Context/SnackbarContext";
 import {
   commentFromWsAtom,
   isLoggedInAtom,
   loggedUserAtom,
   themeAtom,
 } from "./utils/Atoms";
-import HomePage from "./Components/Pages/HomePage/HomePage";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import NotFoundPage from "./Components/Pages/NotFoundPage/NotFoundPage";
-import ProfilePage from "./Components/Pages/ProfilePage/ProfilePage";
-import { apiUrl, wsUrl } from "./Consts/Api";
-import { SnackbarProvider } from "./Context/SnackbarContext";
-import useWebSocketConnection from "./Consts/UseStompClient";
-import useStompClient from "./Consts/UseStompClient";
 
 function App() {
   const [theme, setTheme] = useAtom(themeAtom);
@@ -34,14 +31,6 @@ function App() {
       setCommentFromWs(JSON.parse(messages[messages.length - 1]));
     }
   }, [messages]);
-
-  useEffect(() => {
-    const savedUser = localStorage.getItem("loggedUser");
-    if (savedUser) {
-      setLoggedUser(JSON.parse(savedUser));
-      setIsLogged(true);
-    }
-  }, [setLoggedUser]);
 
   useEffect(() => {
     if (loggedUser) {
@@ -75,8 +64,6 @@ function App() {
 
   useEffect(() => {
     setTheme(userTheme);
-    console.log(wsUrl);
-    console.log(apiUrl);
   }, [userTheme]);
 
   return (

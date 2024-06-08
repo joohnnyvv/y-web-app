@@ -1,27 +1,28 @@
+import CloseIcon from "@mui/icons-material/Close";
 import {
   Box,
   Divider,
   IconButton,
   Modal,
+  Typography,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import React, { useEffect, useRef, useState } from "react";
-import { Post } from "../../Models/PostModel";
-import PostItem from "../Posts/PostItem/PostItem";
-import CommentItem from "./CommentItem";
-import CloseIcon from "@mui/icons-material/Close";
-import CommentInput from "./CommentInput";
 import axios from "axios";
-import { ApiPaths, apiUrl } from "../../Consts/Api";
-import { Comment } from "../../Models/CommentModel";
-import { useSnackbar } from "../../Context/SnackbarContext";
 import { useAtom } from "jotai";
+import { useEffect, useState } from "react";
+import { ApiPaths, apiUrl } from "../../Consts/Api";
+import { useSnackbar } from "../../Context/SnackbarContext";
+import { Comment } from "../../Models/CommentModel";
+import { Post } from "../../Models/PostModel";
 import {
   commentFromWsAtom,
   isLoggedInAtom,
   loggedUserAtom,
 } from "../../utils/Atoms";
+import PostItem from "../Posts/PostItem/PostItem";
+import CommentInput from "./CommentInput";
+import CommentItem from "./CommentItem";
 
 interface CommentsModalProps {
   post: Post;
@@ -51,6 +52,7 @@ export default function CommentsModal(props: CommentsModalProps) {
   const [comments, setComments] = useState<Comment[]>([]);
   const { openSnackbar } = useSnackbar();
   const [loggedUser] = useAtom(loggedUserAtom);
+  const [isLogged] = useAtom(isLoggedInAtom);
   const [commentFromWs, setCommentFromWs] = useAtom(commentFromWsAtom);
 
   const fetchComments = async () => {
@@ -58,7 +60,11 @@ export default function CommentsModal(props: CommentsModalProps) {
     if (loggedUser) {
       try {
         const response = await axios.get(
-          `${apiUrl}${ApiPaths.COMMENTS.COMMENTS}/${props.post.id}?userId=${loggedUser.id}`
+          `${apiUrl}${ApiPaths.COMMENTS.COMMENTS}/${
+            props.post.id
+          }?loggedUserId=${loggedUser ? loggedUser.id : -1}&userId=${
+            loggedUser.id
+          }`
         );
         setComments(response.data);
       } catch (error) {
@@ -110,14 +116,20 @@ export default function CommentsModal(props: CommentsModalProps) {
         <Divider sx={{ margin: "5px 0 5px 0" }} />
         <CommentInput fetchComments={fetchComments} post={props.post} />
         <Divider sx={{ margin: "5px 0 5px 0" }} />
-        {comments
-          ? comments.map((comment) => (
-              <div key={comment.id}>
-                <CommentItem comment={comment} />
-                <Divider sx={{ margin: "5px 0 5px 0" }} />
-              </div>
-            ))
-          : ""}
+        {comments ? (
+          comments.map((comment) => (
+            <div key={comment.id}>
+              <CommentItem comment={comment} />
+              <Divider sx={{ margin: "5px 0 5px 0" }} />
+            </div>
+          ))
+        ) : isLogged ? (
+          ""
+        ) : (
+          <Typography variant="h1">
+            You need to login to see comments
+          </Typography>
+        )}
       </Box>
     </Modal>
   );

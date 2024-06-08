@@ -23,6 +23,7 @@ import { useSnackbar } from "../../../Context/SnackbarContext";
 
 interface PostItemProps {
   post: Post;
+  fetchPosts?: () => Promise<void>;
 }
 
 const modalImgStyle = {
@@ -52,7 +53,9 @@ export default function PostItem(props: PostItemProps) {
   const { openSnackbar } = useSnackbar();
 
   const handleOpen = () => setIsModalImgOpen(true);
-  const handleClose = () => setIsModalImgOpen(false);
+  const handleClose = () => {
+    setIsModalImgOpen(false);
+  };
 
   const textRef = useRef<HTMLDivElement>(null);
 
@@ -145,6 +148,8 @@ export default function PostItem(props: PostItemProps) {
               <Box className="like-icon">
                 {isLikedByUser ? (
                   <FavoriteOutlinedIcon fontSize="small" color="error" />
+                ) : !isLogged ? (
+                  <FavoriteBorderOutlinedIcon fontSize="small" />
                 ) : (
                   <FavoriteBorderOutlinedIcon fontSize="small" />
                 )}
@@ -219,7 +224,10 @@ export default function PostItem(props: PostItemProps) {
       <CommentsModal
         post={props.post}
         isOpen={isCommentsModalOpen}
-        handleClose={() => setIsCommentsModalOpen(false)}
+        handleClose={() => {
+          props.fetchPosts && props.fetchPosts();
+          setIsCommentsModalOpen(false);
+        }}
       />
       <Modal
         open={isModalImgOpen}
