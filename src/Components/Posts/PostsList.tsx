@@ -32,9 +32,7 @@ export default function PostsList(props: PostsListProps) {
       setIsLoading(true);
       try {
         const response = await axios.get(
-          `${apiUrl}${ApiPaths.POSTS.POSTS}?loggedUserId=${
-            loggedUser ? loggedUser.id : -1
-          }&filter=new`
+          `${apiUrl}${ApiPaths.POSTS.POSTS}?loggedUserId=${loggedUserId.current}&filter=new`
         );
         setPosts(response.data);
       } catch (error) {
@@ -58,9 +56,15 @@ export default function PostsList(props: PostsListProps) {
   };
 
   useEffect(() => {
+    if (!loggedUser) {
+      loggedUserId.current = -1;
+    } else {
+      loggedUserId.current = loggedUser.id;
+    }
     if (didMount.current) {
       fetchPosts();
     }
+    didMount.current = true;
   }, [loggedUser]);
 
   useEffect(() => {
@@ -74,7 +78,6 @@ export default function PostsList(props: PostsListProps) {
     } else {
       fetchPosts();
     }
-    didMount.current = true;
   }, []);
 
   return (
