@@ -9,3 +9,5 @@ export const themeAtom = atom<"dark" | "light">("light");
 export const isLoggedInAtom = atom<boolean>(false);
 
 export const loggedUserAtom = atom<User | null>(null);
+
+export const isLoadingAtom = atom<boolean>(false);

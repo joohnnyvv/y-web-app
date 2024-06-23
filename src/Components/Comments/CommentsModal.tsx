@@ -17,6 +17,7 @@ import { Comment } from "../../Models/CommentModel";
 import { Post } from "../../Models/PostModel";
 import {
   commentFromWsAtom,
+  isLoadingAtom,
   isLoggedInAtom,
   loggedUserAtom,
 } from "../../utils/Atoms";
@@ -40,6 +41,7 @@ const style = (isMobile: boolean) => ({
   border: "2px solid #000",
   boxShadow: 24,
   overflowY: "scroll",
+  overflowX: "hidden",
   p: 4,
   width: isMobile ? "95%" : "auto",
   maxWidth: isMobile ? "95%" : "sm",
@@ -48,7 +50,7 @@ const style = (isMobile: boolean) => ({
 export default function CommentsModal(props: CommentsModalProps) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useAtom(isLoadingAtom);
   const [comments, setComments] = useState<Comment[]>([]);
   const { openSnackbar } = useSnackbar();
   const [loggedUser] = useAtom(loggedUserAtom);
@@ -56,8 +58,8 @@ export default function CommentsModal(props: CommentsModalProps) {
   const [commentFromWs, setCommentFromWs] = useAtom(commentFromWsAtom);
 
   const fetchComments = async () => {
-    setIsLoading(true);
     if (loggedUser) {
+      setIsLoading(true);
       try {
         const response = await axios.get(
           `${apiUrl}${ApiPaths.COMMENTS.COMMENTS}/${

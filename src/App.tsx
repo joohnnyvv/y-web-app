@@ -1,4 +1,6 @@
 import {
+  Backdrop,
+  CircularProgress,
   createTheme,
   Paper,
   ThemeProvider,
@@ -14,17 +16,20 @@ import useStompClient from "./Consts/UseStompClient";
 import { SnackbarProvider } from "./Context/SnackbarContext";
 import {
   commentFromWsAtom,
+  isLoadingAtom,
   isLoggedInAtom,
   loggedUserAtom,
   themeAtom,
 } from "./utils/Atoms";
+import { wsUrl } from "./Consts/Api";
 
 function App() {
   const [theme, setTheme] = useAtom(themeAtom);
   const [loggedUser, setLoggedUser] = useAtom(loggedUserAtom);
   const [isLogged, setIsLogged] = useAtom(isLoggedInAtom);
   const [commentFromWs, setCommentFromWs] = useAtom(commentFromWsAtom);
-  const messages = useStompClient("ws://localhost:8080/ws");
+  const [isLoading, setIsLoading] = useAtom(isLoadingAtom);
+  const messages = useStompClient(wsUrl);
 
   useEffect(() => {
     if (messages.length > 0) {
@@ -85,6 +90,12 @@ function App() {
         >
           <RouterProvider router={router} />
         </Paper>
+        <Backdrop
+          sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+          open={isLoading}
+        >
+          <CircularProgress color="inherit" />
+        </Backdrop>
       </SnackbarProvider>
     </ThemeProvider>
   );

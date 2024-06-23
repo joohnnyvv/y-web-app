@@ -4,8 +4,6 @@ import NavBar from "../../NavBar/NavBar";
 import AddPostInput from "../../Posts/AddPostInput/AddPostInput";
 
 export default function HomePage() {
-  const theme = useTheme();
-
   return (
     <>
       <NavBar />

@@ -15,7 +15,7 @@ import ThemeSwitch from "./ThemeSwitch/ThemeSwitch";
 import { ActiveBadge } from "../ActiveBadge/ActiveBadge";
 import { Link } from "react-router-dom";
 import { useAtom } from "jotai";
-import { isLoggedInAtom, loggedUserAtom } from "../../utils/Atoms";
+import { isLoggedInAtom, loggedUserAtom, themeAtom } from "../../utils/Atoms";
 import {
   loggedMenuSettings,
   notLoggedMenuSettings,
@@ -33,6 +33,7 @@ function ResponsiveAppBar() {
   >("Log in");
   const [isSettingsMenuModalOpen, setIsSettingsMenuModalOpen] = useState(false);
   const [loggedUser, setLoggedUser] = useAtom(loggedUserAtom);
+  const [theme] = useAtom(themeAtom);
 
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
@@ -60,7 +61,6 @@ function ResponsiveAppBar() {
         break;
       case "Profile":
         setSettingsMenuCase(menuItem);
-        setIsSettingsMenuModalOpen(true);
         break;
       case "Logout":
         setIsLoggedIn(false);
@@ -115,14 +115,40 @@ function ResponsiveAppBar() {
               onClose={handleCloseUserMenu}
             >
               {isLoggedIn
-                ? Object.values(loggedMenuSettings).map((setting) => (
-                    <MenuItem
-                      key={setting}
-                      onClick={() => handleUserMenuItemClick(setting)}
-                    >
-                      <Typography textAlign="center">{setting}</Typography>
-                    </MenuItem>
-                  ))
+                ? Object.values(loggedMenuSettings).map((setting) =>
+                    setting === "Profile" ? (
+                      <Link
+                        to={`/profile/${loggedUser?.id}`}
+                        style={{
+                          padding: 0,
+                          textDecoration: "none",
+                        }}
+                      >
+                        <MenuItem
+                          key={setting}
+                          onClick={() => handleUserMenuItemClick(setting)}
+                        >
+                          <Typography
+                            textAlign="center"
+                            sx={
+                              theme === "dark"
+                                ? { color: "white" }
+                                : { color: "black" }
+                            }
+                          >
+                            {setting}
+                          </Typography>
+                        </MenuItem>
+                      </Link>
+                    ) : (
+                      <MenuItem
+                        key={setting}
+                        onClick={() => handleUserMenuItemClick(setting)}
+                      >
+                        <Typography textAlign="center">{setting}</Typography>
+                      </MenuItem>
+                    )
+                  )
                 : Object.values(notLoggedMenuSettings).map((setting) => (
                     <MenuItem
                       key={setting}

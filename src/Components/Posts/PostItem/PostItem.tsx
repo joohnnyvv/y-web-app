@@ -43,7 +43,7 @@ const modalImgStyle = {
 
 export default function PostItem(props: PostItemProps) {
   const [isPostTextExpanded, setIsPostTextExpanded] = useState(false);
-  const [isLikedByUser, setIsLikedByUser] = useState(props.post.isLikedByMe);
+  const [isLikedByUser, setIsLikedByUser] = useState(false);
   const [isTextOverflowing, setIsTextOverflowing] = useState(false);
   const [isModalImgOpen, setIsModalImgOpen] = useState(false);
   const [isCommentsModalOpen, setIsCommentsModalOpen] = useState(false);
@@ -58,6 +58,10 @@ export default function PostItem(props: PostItemProps) {
   };
 
   const textRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setIsLikedByUser(props.post.isLikedByMe);
+  }, [props.post]);
 
   const handleLikeClick = async () => {
     try {

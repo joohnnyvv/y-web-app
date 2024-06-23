@@ -15,7 +15,11 @@ import axios from "axios";
 import { ApiPaths, apiUrl } from "../../../../Consts/Api";
 import { User } from "../../../../Models/UserModel";
 import { useAtom } from "jotai";
-import { isLoggedInAtom, loggedUserAtom } from "../../../../utils/Atoms";
+import {
+  isLoadingAtom,
+  isLoggedInAtom,
+  loggedUserAtom,
+} from "../../../../utils/Atoms";
 import { useSnackbar } from "../../../../Context/SnackbarContext";
 
 interface LoginModalProps {
@@ -30,6 +34,7 @@ export default function LoginModal(props: LoginModalProps) {
   const [formValid, setFormValid] = useState(false);
   const [isLogged, setIsLogged] = useAtom(isLoggedInAtom);
   const [loggedUser, setLoggedUser] = useAtom(loggedUserAtom);
+  const [isLoading, setIsLoading] = useAtom(isLoadingAtom);
   const { openSnackbar } = useSnackbar();
 
   useEffect(() => {
@@ -78,6 +83,7 @@ export default function LoginModal(props: LoginModalProps) {
       email: email,
       password: password,
     };
+    setIsLoading(true);
     axios
       .post(`${apiUrl}/${ApiPaths.USER.LOGIN}`, reqBody)
       .then((res) => {
@@ -89,7 +95,8 @@ export default function LoginModal(props: LoginModalProps) {
       .catch((error) => {
         openSnackbar("Wrong email or password", "error");
         console.error(error);
-      });
+      })
+      .finally(() => setIsLoading(false));
   };
 
   return (

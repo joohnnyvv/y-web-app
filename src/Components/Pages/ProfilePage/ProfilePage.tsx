@@ -38,7 +38,7 @@ export default function ProfilePage() {
             padding: "20px",
           }}
         >
-          <Typography variant="h1">User not found</Typography>
+          <Typography variant="h1"></Typography>
         </Box>
       </>
     );

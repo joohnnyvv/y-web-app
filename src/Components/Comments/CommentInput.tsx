@@ -8,7 +8,11 @@ import {
 import React, { useState } from "react";
 import { ActiveBadge } from "../ActiveBadge/ActiveBadge";
 import { useAtom } from "jotai";
-import { isLoggedInAtom, loggedUserAtom } from "../../utils/Atoms";
+import {
+  isLoadingAtom,
+  isLoggedInAtom,
+  loggedUserAtom,
+} from "../../utils/Atoms";
 import axios from "axios";
 import { ApiPaths, apiUrl } from "../../Consts/Api";
 import { Post } from "../../Models/PostModel";
@@ -21,17 +25,17 @@ export default function CommentInput(props: {
 }) {
   const [isLogged] = useAtom(isLoggedInAtom);
   const [loggedUser] = useAtom(loggedUserAtom);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useAtom(isLoadingAtom);
   const [content, setContent] = useState("");
   const { openSnackbar } = useSnackbar();
 
   const handleSubmit = async () => {
-    setIsLoading(true);
     if (loggedUser && content) {
       const requestBody: AddCommentBody = {
         userId: loggedUser.id,
         content: content,
       };
+      setIsLoading(true);
       try {
         await axios.post(
           `${apiUrl}${ApiPaths.COMMENTS.COMMENTS}/${props.post.id}`,
@@ -104,7 +108,7 @@ export default function CommentInput(props: {
           disabled={!isLogged && content.length === 0}
           onClick={handleSubmit}
         >
-          {isLoading ? <CircularProgress color="inherit" size={25} /> : "Add"}
+          Add
         </Button>
       </Box>
     </Box>

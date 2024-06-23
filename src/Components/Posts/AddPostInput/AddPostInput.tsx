@@ -16,7 +16,11 @@ import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import AddImageDialog from "../AddImageDialog/AddImageDialog";
 import DownloadDoneIcon from "@mui/icons-material/DownloadDone";
 import { AddPostBody } from "../../../Models/RequestBody/RequestBody";
-import { isLoggedInAtom, loggedUserAtom } from "../../../utils/Atoms";
+import {
+  isLoadingAtom,
+  isLoggedInAtom,
+  loggedUserAtom,
+} from "../../../utils/Atoms";
 import { useAtom } from "jotai";
 import axios from "axios";
 import { ApiPaths, apiUrl } from "../../../Consts/Api";
@@ -32,7 +36,7 @@ export default function AddPostInput(props: {
   const [isLogged] = useAtom(isLoggedInAtom);
   const [loggedUser] = useAtom(loggedUserAtom);
   const { openSnackbar } = useSnackbar();
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useAtom(isLoadingAtom);
 
   const handleAddImageUrl = (url: string) => {
     setImgUrl(url);
@@ -41,7 +45,9 @@ export default function AddPostInput(props: {
   const handleTextFieldChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    setPostContent(event.target.value);
+    if (event.target.value.length <= 255) {
+      setPostContent(event.target.value);
+    }
   };
 
   const handleSubmit = async () => {
@@ -51,9 +57,7 @@ export default function AddPostInput(props: {
         imageUrl: imgUrl,
         userId: loggedUser?.id,
       };
-
       setIsLoading(true);
-
       try {
         await axios.post(`${apiUrl}${ApiPaths.POSTS.POSTS}`, postData);
         props.fetchPosts();
@@ -88,9 +92,10 @@ export default function AddPostInput(props: {
         marginBottom: "20px",
         display: "flex",
         gap: "20px",
+        width: isLoading ? "860px" : "none",
       }}
     >
-      <Box>
+      <Box width="md">
         {loggedUser ? (
           <Avatar
             alt={loggedUser.name + " " + loggedUser.lastName}
@@ -119,6 +124,7 @@ export default function AddPostInput(props: {
           maxRows={6}
           value={postContent}
           onChange={handleTextFieldChange}
+          helperText={`${postContent.length}/255`}
         />
         <Box sx={{ display: "flex", justifyContent: "space-between" }}>
           <IconButton
@@ -145,15 +151,15 @@ export default function AddPostInput(props: {
             <div>
               <Button
                 variant="contained"
-                sx={{ maxWidth: "30%", alignSelf: "end", borderRadius: "14px" }}
+                sx={{
+                  maxWidth: "30%",
+                  alignSelf: "end",
+                  borderRadius: "14px",
+                }}
                 onClick={handleSubmit}
-                disabled={!isLogged}
+                disabled={!isLogged || !postContent}
               >
-                {isLoading ? (
-                  <CircularProgress color="inherit" size={25} />
-                ) : (
-                  "Post"
-                )}
+                Post
               </Button>
             </div>
           </Tooltip>
